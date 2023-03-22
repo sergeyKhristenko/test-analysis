@@ -1,7 +1,6 @@
 # parse-test-reports
 
-Harness plugin for parsing test reports. The plugin with exit with `exit status 1` if there are any tests failing in directories matching the input glob.
-
+Harness plugin for parsing test reports. The plugin will exit with `exit status 1` if there are any tests failing in directories matching the input globs. The plugin currently only supports JUnit XML test reports.
 ## Build
 
 Build the binary with the following commands:
@@ -37,5 +36,5 @@ Execute the plugin in Harness pipeline:
         connectorRef: dockerConnector
         image: harnesscommunity/parse-test-reports:latest
         settings:
-          test_globs: folder1/*.xml, folder1/*.xml
+          test_globs: folder1/*.xml, folder2/*.xml
 ```
