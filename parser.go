@@ -239,9 +239,9 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 
 	log.Infoln("Finished parsing tests with quarantine list")
 
-	// if stats.FailCount > 0 || stats.ErrorCount > 0 {
-	// 	return stats, fmt.Errorf("found %d non-quarantined failed tests and %d errors", stats.FailCount, stats.ErrorCount)
-	// }
+	if stats.FailCount > 0 || stats.ErrorCount > 0 {
+		return stats, fmt.Errorf("found %d non-quarantined failed tests and %d errors", stats.FailCount, stats.ErrorCount)
+	}
 	return stats, nil
 }
 
