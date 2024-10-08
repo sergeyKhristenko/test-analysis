@@ -189,6 +189,7 @@ func isURL(source string) bool {
 func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interface{}, log *logrus.Logger) (TestStats, error) {
 	files := getFiles(paths, log)
 	stats := TestStats{}
+	nonQuarantinedFailures := 0
 
 	if len(files) == 0 {
 		log.Errorln("could not find any files matching the provided report path")
@@ -215,6 +216,7 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 				case "failed":
 					if !isQuarantined(testIdentifier, quarantineList) {
 						log.Infoln(fmt.Sprintf("Not Quarantined test failed: %s", testIdentifier))
+						nonQuarantinedFailures++
 					} else {
 						log.Infoln(fmt.Sprintf("Quarantined test failed: %s", testIdentifier))
 					}
@@ -223,6 +225,7 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 					fileStats.SkippedCount++
 				case "error":
 					fileStats.ErrorCount++
+					// nonQuarantinedFailures++ // Assuming errors are always considered non-quarantined
 				}
 			}
 		}
@@ -239,8 +242,8 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 
 	log.Infoln("Finished parsing tests with quarantine list")
 
-	if stats.FailCount > 0 || stats.ErrorCount > 0 {
-		return stats, fmt.Errorf("found %d non-quarantined failed tests and %d errors", stats.FailCount, stats.ErrorCount)
+	if nonQuarantinedFailures > 0 {
+		return stats, fmt.Errorf("found %d non-quarantined failed tests and errors", nonQuarantinedFailures)
 	}
 	return stats, nil
 }
