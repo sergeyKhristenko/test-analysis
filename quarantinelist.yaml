@@ -1,0 +1,11 @@
+quarantine_tests:
+  - classname: name2
+    name: TestOne
+    start_date:
+    end_date:
+    meta:
+  - classname: JUnitXmlReporter.constructor
+    name: should default path to an empty string
+    start_date:
+    end_date:
+    meta:
