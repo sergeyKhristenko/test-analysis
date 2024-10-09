@@ -9,3 +9,63 @@ quarantine_tests:
     start_date:
     end_date:
     meta:
+  - classname: pkg1.test.test_things
+    name: test_params_func:2
+    start_date:
+    end_date:
+    meta: Assertion failure
+  - classname: pkg1.test.test_things
+    name: test_params_func_multi_arg:2
+    start_date:
+    end_date:
+    meta: Assertion failure
+  - classname: pkg1.test.test_things.SomeTests
+    name: test_failed
+    start_date:
+    end_date:
+    meta: Assertion failure - "I failed"
+  - classname: pkg1.test.test_things.SomeTests
+    name: test_params_method:2
+    start_date:
+    end_date:
+    meta: Assertion failure - 2 != 1
+  - classname: pkg1.test.test_things.SomeTests
+    name: test_typeerr
+    start_date:
+    end_date:
+    meta: TypeError - "oops"
+  - classname: pkg1.test.test_things.SomeTests
+    name: test_gen_method:2
+    start_date:
+    end_date:
+    meta: Assertion failure
+  - classname: TestClassSample
+    name: testSomething()
+    start_date:
+    end_date:
+    meta: XCTAssertTrue failed
+  - classname: TestClassSample
+    name: testSomething2()
+    start_date:
+    end_date:
+    meta: NullPointerException
+  - classname: SampleTest
+    name: testB with data set "bool"
+    start_date:
+    end_date:
+    meta: ExpectationFailedException - False should be true
+  - classname: SampleTest
+    name: testC with data set #1
+    start_date:
+    end_date:
+    meta: ExpectationFailedException - 0 should be true
+  - classname: SampleTest
+    name: testC with data set #2
+    start_date:
+    end_date:
+    meta: ExpectationFailedException - '' should be true
+  - classname: com.example.FooTest
+    name: testStdoutStderr
+    start_date:
+    end_date:
+    meta: AssertionError
