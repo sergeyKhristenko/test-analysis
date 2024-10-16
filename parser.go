@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/harness-community/parse-test-reports/gojunit"
 	"github.com/mattn/go-zglob"
@@ -190,6 +191,7 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 	files := getFiles(paths, log)
 	stats := TestStats{}
 	nonQuarantinedFailures := 0
+	expiredTests := 0
 
 	if len(files) == 0 {
 		log.Errorln("could not find any files matching the provided report path")
@@ -214,11 +216,18 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 				case "passed":
 					fileStats.PassCount++
 				case "failed":
-					if !isQuarantined(testIdentifier, quarantineList) {
+					// Check if the test is quarantined
+					if !isQuarantined(testIdentifier, quarantineList, log) {
 						log.Infoln(fmt.Sprintf("Not Quarantined test failed: %s", testIdentifier))
 						nonQuarantinedFailures++
 					} else {
 						log.Infoln(fmt.Sprintf("Quarantined test failed: %s", testIdentifier))
+
+						// Check if the test is expired
+						if isExpired(testIdentifier, quarantineList, log) {
+							log.Infoln(fmt.Sprintf("Quarantined test expired: %s", testIdentifier))
+							expiredTests++
+						}
 					}
 					fileStats.FailCount++
 				case "skipped":
@@ -242,14 +251,14 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 
 	log.Infoln("Finished parsing tests with quarantine list")
 
-	if nonQuarantinedFailures > 0 {
-		return stats, fmt.Errorf("found %d non-quarantined failed tests and errors", nonQuarantinedFailures)
+	if nonQuarantinedFailures > 0 || expiredTests > 0 {
+		return stats, fmt.Errorf("found %d non-quarantined failed tests and %d expired tests", nonQuarantinedFailures, expiredTests)
 	}
 	return stats, nil
 }
 
-func isQuarantined(testIdentifier string, quarantineList map[string]interface{}) bool {
-	log := logrus.New()
+// isQuarantined checks if the test is present in the quarantine list and respects the date range
+func isQuarantined(testIdentifier string, quarantineList map[string]interface{}, log *logrus.Logger) bool {
 	log.Infoln(fmt.Sprintf("Checking if test is quarantined: %s", testIdentifier))
 
 	tests, ok := quarantineList["quarantine_tests"].([]interface{})
@@ -274,5 +283,52 @@ func isQuarantined(testIdentifier string, quarantineList map[string]interface{})
 	}
 
 	log.Infoln(fmt.Sprintf("Test %s is not quarantined", testIdentifier))
+	return false
+}
+
+// isExpired checks if the current date is outside the start_date and end_date for a quarantined test
+func isExpired(testIdentifier string, quarantineList map[string]interface{}, log *logrus.Logger) bool {
+	tests, ok := quarantineList["quarantine_tests"].([]interface{})
+	if !ok {
+		log.Warnln("Quarantine list does not contain 'quarantine_tests' key or it's not a slice")
+		return false
+	}
+
+	for _, test := range tests {
+		if testMap, ok := test.(map[interface{}]interface{}); ok {
+			quarantinedClassname, classnameOk := testMap["classname"].(string)
+			quarantinedName, nameOk := testMap["name"].(string)
+
+			if classnameOk && nameOk {
+				quarantinedIdentifier := quarantinedClassname + "." + quarantinedName
+				if quarantinedIdentifier == testIdentifier {
+					// Check for date range
+					startDate, startOk := testMap["start_date"].(string)
+					endDate, endOk := testMap["end_date"].(string)
+
+					if startOk && endOk {
+						currentDate := time.Now()
+
+						startTime, err := time.Parse("2006-01-02", startDate)
+						if err != nil {
+							log.WithError(err).Warnln("Failed to parse start_date")
+							continue
+						}
+
+						endTime, err := time.Parse("2006-01-02", endDate)
+						if err != nil {
+							log.WithError(err).Warnln("Failed to parse end_date")
+							continue
+						}
+
+						if currentDate.Before(startTime) || currentDate.After(endTime) {
+							return true
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return false
 }
