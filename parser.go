@@ -322,6 +322,7 @@ func isExpired(testIdentifier string, quarantineList map[string]interface{}, log
 						}
 
 						if currentDate.Before(startTime) || currentDate.After(endTime) {
+							log.Infoln(fmt.Sprintf("Current Date %s lies outside start_date %s and end_date %s.", currentDate, startTime, endTime))
 							return true
 						}
 					}
