@@ -7,7 +7,7 @@ quarantine_tests:
   - classname: JUnitXmlReporter.constructor
     name: should default path to an empty string
     start_date: 2023-05-01
-    end_date: 2023-11-30
+    end_date: 2025-11-30
     meta:
   - classname: pkg1.test.test_things
     name: test_params_func:2
