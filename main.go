@@ -43,9 +43,9 @@ func main() {
 
 func run(c *cli.Context) error {
 	p := Plugin{
-		GlobPaths:         c.String(globSetting),
-		QuarantineFile:    c.String(quarantineFileSetting),
-		FailOnQuarantine:  c.Bool(quarantineSetting),
+		GlobPaths:        c.String(globSetting),
+		QuarantineFile:   c.String(quarantineFileSetting),
+		FailOnQuarantine: c.Bool(quarantineSetting),
 	}
 	return p.Exec()
 }
