@@ -72,11 +72,11 @@ func (p Plugin) Exec() error {
 
 func writeTestStats(stats TestStats, log *logrus.Logger) {
 	statsMap := map[string]int{
-		"TEST_COUNT":  stats.TestCount,
-		"FAIL_COUNT":  stats.FailCount,
-		"PASS_COUNT":  stats.PassCount,
-		"SKIPPED":     stats.SkippedCount,
-		"ERROR_COUNT": stats.ErrorCount,
+		"TOTAL_TESTS":  stats.TestCount,
+		"FAILED_TESTS":  stats.FailCount,
+		"PASSED_TESTS":  stats.PassCount,
+		"SKIPPED_TESTS":     stats.SkippedCount,
+		"ERROR_TESTS": stats.ErrorCount,
 	}
 
 	for key, value := range statsMap {
