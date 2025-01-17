@@ -35,7 +35,7 @@ Execute the plugin in Harness pipeline:
       identifier: Parse_Test_Reports_Plugin
       spec:
         connectorRef: dockerConnector
-        image: harnesscommunity/parse-test-reports:latest
+        image: plugins/test-analysis:latest
         settings:
           test_globs: folder1/*.xml, folder2/*.xml
 ```
