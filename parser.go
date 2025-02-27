@@ -206,7 +206,7 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 				switch test.Result.Status {
 				case "passed":
 					fileStats.PassCount++
-				case "failed":
+				case "failed", "error":
 					if !isQuarantined(testIdentifier, quarantineList, log) {
 						log.Infoln("Not Quarantined test failed:", testIdentifier)
 						nonQuarantinedFailures++
@@ -214,11 +214,14 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 						log.Infoln("Quarantined test expired:", testIdentifier)
 						expiredTests++
 					}
-					fileStats.FailCount++
+
+					if test.Result.Status == "failed" {
+						fileStats.FailCount++
+					} else {
+						fileStats.ErrorCount++
+					}
 				case "skipped":
 					fileStats.SkippedCount++
-				case "error":
-					fileStats.ErrorCount++
 				}
 			}
 		}
@@ -240,11 +243,11 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 
 	if nonQuarantinedFailures > 0 || expiredTests > 0 {
 		// Construct the error message by concatenating string values
-		errorMessage := "Non-quarantined failures: " + strconv.Itoa(nonQuarantinedFailures) + 
+		errorMessage := "Non-quarantined failures: " + strconv.Itoa(nonQuarantinedFailures) +
 			", Expired tests: " + strconv.Itoa(expiredTests) + " found"
 		return stats, errors.New(errorMessage)
 	}
-	
+
 	return stats, nil
 }
 
