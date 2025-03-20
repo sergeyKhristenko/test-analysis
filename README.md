@@ -51,7 +51,7 @@ Below is the example with ‘fail_on_quarantine’ = true
                     image: plugins/test-analysis:latest
                     settings:
                       test_globs: sample1/*.xml, sample2/*.xml
-                      quarantine_file: quarantinelist.yaml 
+                      quarantine_file: quarantinelist.yaml
                       fail_on_quarantine: true
               - step:
                   identifier: verify_output_variables
