@@ -36,7 +36,7 @@ func ParseTests(paths []string, log *logrus.Logger) (TestStats, error) {
 
 	if len(files) == 0 {
 		log.Errorln("could not find any files matching the provided report path")
-		return stats, nil
+		return stats, errors.New("could not find any files matching the provided report path")
 	}
 
 	for _, file := range files {
@@ -187,7 +187,7 @@ func ParseTestsWithQuarantine(paths []string, quarantineList map[string]interfac
 
 	if len(files) == 0 {
 		log.Errorln("could not find any files matching the provided report path")
-		return stats, nil
+		return stats, errors.New("could not find any files matching the provided report path")
 	}
 
 	log.Infoln("Starting to parse tests with quarantine list")
