@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -14,11 +15,14 @@ type Plugin struct {
 }
 
 type TestStats struct {
-	TestCount    int
-	FailCount    int
-	PassCount    int
-	SkippedCount int
-	ErrorCount   int
+	TestCount                   int
+	FailCount                   int
+	PassCount                   int
+	SkippedCount                int
+	ErrorCount                  int
+	NonQuarantinedFailuresList  []string
+	ExpiredTestsList            []string
+	QuarantinedFailuresList     []string
 }
 
 // Exec executes the plugin.
@@ -59,6 +63,10 @@ func (p Plugin) Exec() error {
 
 	log.Infof("Final test statistics: Total: %d, Passed: %d, Failed: %d, Skipped: %d, Errors: %d",
 		stats.TestCount, stats.PassCount, stats.FailCount, stats.SkippedCount, stats.ErrorCount)
+	
+	log.Infof("nonQuarantinedFailures: \n%s", strings.Join(stats.NonQuarantinedFailuresList, "\n"))
+	log.Infof("expiredTests: \n%s", strings.Join(stats.ExpiredTestsList, "\n"))
+	log.Infof("quarantinedFailures: \n%s", strings.Join(stats.QuarantinedFailuresList, "\n"))
 
 	// Handle the error after writing stats
 	if err != nil {

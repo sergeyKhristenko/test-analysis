@@ -24,7 +24,7 @@ $ docker buildx build -f docker/Dockerfile -t harnesscommunity/parse-test-report
 
 Execute from the working directory:
 ```sh
-$ docker run -e PLUGIN_TEST_GLOBS="folder1/*.xml, folder2/*.xml" harnesscommunity/parse-test-reports:latest
+$ docker run -e PLUGIN_TEST_GLOBS="results.xml" harnesscommunity/parse-test-reports:latest
 ```
 
 Execute the plugin in Harness pipeline:
@@ -67,4 +67,10 @@ Below is the example with ‘fail_on_quarantine’ = true
                       echo "Failed Tests: <+steps.Plugin_1.output.outputVariables.FAILED_TESTS>"
                       echo "Skipped Tests: <+steps.Plugin_1.output.outputVariables.SKIPPED_TESTS>"
                       echo "Error Tests: <+steps.Plugin_1.output.outputVariables.ERROR_TESTS>"
+```
+
+## Running locally
+
+```sh
+$ PLUGIN_QUARANTINE_FILE='quarantinelist.yaml' PLUGIN_FAIL_ON_QUARANTINE=true DRONE_OUTPUT='OUTPUT_FILE.txt' PLUGIN_TEST_GLOBS='results.xml' ./parse-test-reports
 ```
