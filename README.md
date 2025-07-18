@@ -15,8 +15,6 @@ $ go build
 Build the Docker image with the following commands:
 
 ```sh
-$ GOOS=linux GOARCH=amd64 go build
-
 $ docker buildx build -f docker/Dockerfile -t harnesscommunity/parse-test-reports:latest --platform=linux/amd64 --load .
 ```
 
@@ -74,3 +72,23 @@ Below is the example with ‘fail_on_quarantine’ = true
 ```sh
 $ PLUGIN_QUARANTINE_FILE='quarantinelist.yaml' PLUGIN_FAIL_ON_QUARANTINE=true DRONE_OUTPUT='OUTPUT_FILE.txt' PLUGIN_TEST_GLOBS='results.xml' ./parse-test-reports
 ```
+
+### Running Tests
+
+Run all tests:
+```sh
+$ go test ./...
+```
+
+Run with junit report:
+```sh
+$ TEST_RESULTS_DIR=test-results
+$ JUNIT_REPORT_FILE=junit-report.xml
+$ mkdir -p ${TEST_RESULTS_DIR}
+$ go test -v ./... 2>&1 | go-junit-report -set-exit-code -out ${TEST_RESULTS_DIR}/${JUNIT_REPORT_FILE}
+```
+
+### Test Structure
+
+- `parser_test.go` - Tests for parsing functions and quarantine logic
+- `plugin_test.go` - Tests for the Plugin struct and its methods
